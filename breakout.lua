@@ -696,3 +696,31 @@ function update_sd()
         end
     end
 end
+
+
+--juicy stuff
+function showsash(_t,_c,_tc)
+    sash_w=0
+    sash_dw=4
+    sash_c=_c
+    sash_text=_t
+    sash_frames=0
+    sash_v=true
+    sash_tx=-#sash_text*4
+    sash_tdx=64-(#sash_text*2)  --center
+    sash_delay_w=0
+    sash_delay_t=5
+    sash_tc=_tc
+end
+
+
+--screen shake
+function doshake()
+    local shakex=16-rnd(32)
+    local shakey=16-rnd(32)
+    camera(shakex*shake,shakey*shake)
+    shake=shake*0.95
+    if shake<0.05 then
+        shake=0
+    end
+end
