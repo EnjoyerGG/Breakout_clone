@@ -1,8 +1,120 @@
 --Breakout game cloned from LazyDevs
 
+--初始化函数
 function _init()
     --盗版检测
     pirate=false
     if(stat(l02)!="www.lexaloffle.com" and stat(102)!=0) pirate=true
+    cartdata("lazydevs_hero1_v2")
+    cls()
 
-    
+    screenbox={
+        left=126,
+        right=1,
+        top=140,
+        bottom=7
+    }
+
+    mode="logo"
+    lcnt=0
+    level=""
+    debug=""
+    levelnum=1
+    levels={}
+    loadlevels()
+    startlives=4
+    fastmode=false
+    sd_brick=nil
+    sd_timer=0
+    sd_thresh=1
+    shake=0
+
+    brick_g=7
+    brick_g_i=1
+    brick_w=7
+    brick_w_i=1
+    brick_b=7
+    brick_b_i=1
+    brick_r=7
+    brick_r_i=1
+
+    blinkframe=0
+    blinkspeed=8
+
+    fadeperc=1
+
+    startcountdown=-1
+    govercountdown=-1
+    goverrestart=false
+    arrm=1
+    arrm2=1
+    arrmframe=0
+
+    --particles
+    part={}
+    lasthitx=0
+    lasthity=0
+
+    --speedline windup
+    spdwind=0
+
+    --highscore
+    hs={}
+    hst={}
+    hs1={}
+    hs2={}
+    hs3={}
+    hsb={true,false,false,false,false}
+
+    --reseths()
+    loadhs()
+
+    hschars={"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"}
+    hs_x=128
+    hs_y=128
+    loghs=false
+
+    --typing in intitails
+    niitals={1,1,1}
+    nit_sel=1
+
+    --sash
+    sash_w=0
+    sash_dw=0
+    sash_tx=0
+    sash_tdx=0
+    sash_c=8
+    sash_tc=7
+    sash_text="ohai"
+    sash_frames=0
+    sash_v=false
+    sash_delay_w=0
+    sash_delay_t=0
+
+    --particle partterns
+    parttimer=0
+    partrow=0
+    startparts()
+
+    --infinite loop protection
+    infcounter=0
+
+    --sick messages
+    sick={
+        "so sick!",
+        "yeee boiii!",
+        "impressive!",
+        "i can't even...",
+        "it's lit!",
+        "mah dude!",
+        "c-c-combo!",
+        "winning!",
+        "niiiice",
+        "worh",
+        "seriously now?",
+        "maximum pwnage!"
+    }
+
+    --music
+    music(1)
+end
