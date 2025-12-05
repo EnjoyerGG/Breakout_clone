@@ -488,7 +488,7 @@ function hitbrick(_b,_combo)
         infcounter=0
         sfx(2+chain)
         shatterbrick(_b,lasthitx,lasthity)
-        _b.t=="zz"
+        _b.t=="zz"  --disppear the bricks
 
         if _b==sd_sd_brick then
             getpoints(10)
@@ -553,4 +553,16 @@ function hitbrick(_b,_combo)
         end
         spawnpill(_b.x,_b.y)
     end
+end
+
+
+--increase chain by one
+function boostchain()
+    if chain==6 then
+        local _si=1+flr(rnd(#sick))
+        sfx(44)
+        showsash(sick[_si],-1,1)
+    end
+    chain+=1
+    chain=mid(1,chain,7)
 end
