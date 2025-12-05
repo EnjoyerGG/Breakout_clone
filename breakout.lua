@@ -195,3 +195,41 @@ function nextlevel()
     showsash("stage "..levelnum,0,7)
     serveball()
 end
+
+
+function buildbricks(lvl)
+    local i,j,o,chr,last
+    bricks={}
+
+    j=0
+
+    --powerups:
+    --b=normal brick
+    --x=empty space
+    --i=indestructable brick
+    --h=hardened brick
+    --s=sploding brick
+    --p=powerup brick
+    for i=1,#lvl do
+        j+=1
+        chr=sub(lvl,i,i)
+        if chr=="b" or chr=="i" or chr=="h" or chr=="s" or chr=="p" then
+            last=chr
+            addbrick(j,chr)
+        elseif chr=="x" then
+            last="x"
+        elseif chr=="/" then
+            j=(flr((j-1)/11)+1)*11
+        elseif chr>="1" and chr<="9" then   
+            for o=1,chr+0 do
+                if last=="b" or last=="i" or last=="h" or last=="s" or last=="p" then
+                    addbrick(j,last)
+                elseif last=="x" then
+                    --do nothing
+                end
+                j+=1
+            end
+            j-=1
+        end
+    end
+end
