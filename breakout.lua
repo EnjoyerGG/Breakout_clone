@@ -589,3 +589,39 @@ function megaballsmash()
         timer_mega=120
     end
 end
+
+
+--spawn pills 
+function spawnpill(_x,_y)
+    local _t=flr(rnd(7))+1
+    add(pill,{
+        x=_x,
+        y=_y,
+        t=_t
+    })
+end
+
+
+function checkexplosions()
+    for i=1,#bricks do
+        if bricks[i].t=="zz" and bricks[i].v then
+            bricks[i].t="z"
+        end
+    end
+
+    for i=1,#bricks do
+        if bricks[i].t=="z" and bricks[i].v then
+            explodebrick(i)
+            spawnexplosion(bricks[i].x,bricks[i].y)
+            if shake<0.4 then
+                shake+=0.1
+            end
+        end
+    end
+
+    for i=1,#bricks do
+        if bricks[i].t=="zz" then
+            bricks[i].t="z"
+        end
+    end
+end
