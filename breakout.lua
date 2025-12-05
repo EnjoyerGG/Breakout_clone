@@ -301,3 +301,18 @@ function serveball()
     sticky_x=0
     sticky=false
 end
+
+
+function newball()
+    return {
+        x=0,
+        y=0,
+        dx=0,
+        dy=0,
+        ang=1,
+        stuck=false,
+        rammed=false,
+        colcount=0,
+        collast=nil
+    }
+end
