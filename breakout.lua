@@ -581,3 +581,11 @@ function getpoints(_p)
         points-=10000
     end
 end
+
+
+function megaballsmash()
+    if timer_mega_w>0 then
+        timer_mega_w=0
+        timer_mega=120
+    end
+end
