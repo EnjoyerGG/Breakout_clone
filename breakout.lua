@@ -426,10 +426,56 @@ function releasestuck()
 end
 
 
+--set angle to the balls stuck on the paddle
 function pointstuck(sign)
     for i=1,#ball do
         if ball[i].stuck then
             ball[i].dx=abs(ball[i].dx)*sign
         end
+    end
+end
+
+
+function powerupget(_p)
+    if _p==1 then
+        --slowdown
+        timer_slow=400
+        showsash("slowdown!",9,4)
+    elseif _p==2 then
+        --extra life
+        lives+=1
+        showsash("extra life!",7,6)
+    elseif _p==3 then
+        --catch
+        --check if there are stuck balls
+        hasstuck=false
+        for i=1,#ball do
+            if ball[i].stuck then
+                hasstuck=true
+            end
+        end
+        if hasstuck==false then
+            sticky=true
+        end
+        showsash("sticky paddle!",11,3)
+    elseif _p==4 then
+        --expand
+        timer_expand=600
+        timer_reduce=0
+        showsash("expand!",12,1)
+    elseif _p==5 then
+        --reduce
+        timer_reduce=600
+        timer_expand=0
+        showsash("reduce!",0,8)
+    elseif _p==6 then
+        --megaball
+        timer_mega_w=600
+        timer_mega=0
+        showsash("megaball!",8,2)
+    elseif _p==7 then
+        --multiball
+        multiball()
+        showsash("multiball",10,9)
     end
 end
