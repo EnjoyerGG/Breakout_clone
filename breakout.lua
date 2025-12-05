@@ -168,3 +168,30 @@ function restartlevel()
     showsash("stage "..levelnum,0,7)
     serveball()
 end
+
+
+function nextlevel()
+    mode="game"
+    pad_x=52
+    pad_y=120
+    pad_dx=0
+
+    levelnum+=1
+    if levelnum > #levels then
+        wingame()
+        return
+    end
+    level=levels[levelnum]
+    buildbricks(level)
+
+    chain=1
+    sticky=false
+    timer_mega=0
+    timer_mega_w=0
+    timer_slow=0
+    timer_expand=0
+    timer_reduce=0
+
+    showsash("stage "..levelnum,0,7)
+    serveball()
+end
