@@ -326,8 +326,23 @@ function copyball(ob)
         dy=ob.dy,
         ang=ob.ang,
         stuck=ob.stuck,
-        rammed=ob.rammed,
+        rammed=ob.rammed,   --just hit the blick? prevent damage twice
         colcount=ob.colcount,
         collast=ob.collast
     }
+end
+
+
+function setang(bl,ang)
+    bl.ang=ang
+    if ang==2 then
+        bl.dx=0.5*sign(bl.dx)
+        bl.dy=1.3*sign(bl.dy)
+    elseif ang==0 then
+        bl.dx=1.3*sign(bl.dx)
+        bl.dy=0.5*sign(bl.dy)
+    else
+        bl.dx=1*sign(bl.dx)
+        bl.dy=1*sign(bl.dy)
+    end
 end
