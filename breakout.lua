@@ -316,3 +316,18 @@ function newball()
         collast=nil
     }
 end
+
+
+function copyball(ob)
+    return {
+        x=ob.x,
+        y=ob.y,
+        dx=ob.dx,
+        dy=ob.dy,
+        ang=ob.ang,
+        stuck=ob.stuck,
+        rammed=ob.rammed,
+        colcount=ob.colcount,
+        collast=ob.collast
+    }
+end
