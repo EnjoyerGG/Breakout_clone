@@ -640,3 +640,13 @@ function explodebrick(_i)
         end
     end
 end
+
+
+--AABB collison, rectangle collision detection
+function box_box(box1_x,box1_y,box1_w,box1_h,box2_x,box2_y,box2_w,box2_h)
+ if box1_y > box2_y+box2_h then return false end
+ if box1_y+box1_h < box2_y then return false end
+ if box1_x > box2_x+box2_w then return false end
+ if box1_x+box1_w < box2_x then return false end
+ return true
+end
