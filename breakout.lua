@@ -235,28 +235,68 @@ function buildbricks(lvl)
 end
 
 
-
 function resetpills()
     pill={}
 end
 
 
-function addbrick(_i,_i)
+function addbrick(_i,_t)
+    --the elements of bricks
     local _b={
         x=4+((_i-1)%11)*(brick_w+2),
         y=11+flr((_i-1)/11)*(brick_h+2),
         v=true,
         t=_t,
-        fsh=0,
+        fsh=0,  
         ox=0,
         oy=-(128+rnd(128)),
         dx=0,
         dy=rnd(64),
         hp=1,
     }
-    --strength of hardened blocks
+    --hardened blicks
     if _t=="h" then
         _b.hp=2
     end
     add(bricks,_b)
+end
+
+
+function levelfinished()
+    if #bricks==0 then
+        return true
+    end
+
+    for i=1,#bricks do  
+        if(bricks[i].v==true and bricks[i].t!="i")  return false        
+    end
+
+    return true
+end
+
+
+function serveball()
+    ball={}
+    ball[1]=newball()
+    local mb=ball[1]
+    mb.x=pad_x
+    mb.y=pad_y-ball_r
+    mb.dx=1
+    mb.dy=-1
+    mb.ang=1
+    mb.stuck=true
+
+    sd_brick=nil
+    pointsmult=1
+    chain=1
+    timer_mega=0
+    timer_mega_w=0
+    timer_slow=0
+    timer_expand=0
+    timer_reduce=0
+
+    resetpills()
+
+    sticky_x=0
+    sticky=false
 end
