@@ -479,3 +479,78 @@ function powerupget(_p)
         showsash("multiball",10,9)
     end
 end
+
+
+function hitbrick(_b,_combo)
+    local fshtime=10
+    if _b.t=="s" or _b==sd_brick then
+        megaballsmash()
+        infcounter=0
+        sfx(2+chain)
+        shatterbrick(_b,lasthitx,lasthity)
+        _b.t=="zz"
+
+        if _b==sd_sd_brick then
+            getpoints(10)
+        else
+            getpoints(1)
+        end
+        
+        if(_combo) boostchain()
+    elseif _b.t=="b" then
+        megaballsmash()
+        infcounter=0
+        --regular brick
+        sfx(2+chain)
+        --spawn particles
+        shatterbrick(_b,lasthitx,lasthity)
+        _b.fsh=fshtime
+        _b.v=false
+
+        if _combo then
+            getpoints(1)
+            boostchain()
+        end
+    elseif _b.t=="i" then
+        --invinvible brick
+        sfx(10)
+    elseif _b.t=="h" then
+        megaballsmash()
+        infcounter=0
+        --hardened brick
+        if timer_mega>0 then
+            sfx(2+chain)
+            shatterbrick(_b,lasthitx,lasthity)
+            _b.fsh=fshtime
+            _b.v=false
+            if _combo then
+                getpoints(1)
+                boostchain()
+            end
+        else
+            sfx(10)
+            _b.fsh=fshtime
+            --bump the brick
+            _b.dx=lasthitx*0.25
+            _b.dy=lasthity*0.25
+            _b.hp-=1
+            if _b.hp<=0 then
+                _b.t="b"
+            end
+        end
+    elseif _b.t=="p" then
+        megaballsmash()
+        infcounter=0
+        --powerup brick
+        sfx(2+chain)
+        --spawn particles
+        shatterbrick(_b,lasthitx,lasthity)
+        _b.fsh=fshtime
+        _b.v=false
+        if _combo then
+            getpoints(1)
+            boostchain()
+        end
+        spawnpill(_b.x,_b.y)
+    end
+end
