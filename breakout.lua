@@ -354,7 +354,7 @@ function multiball()
     local ballnum=flr(rnd(#ball))+1
     local ogball=ball[ballnum]
 
-    ball2=copyball(ognball)
+    ball2=copyball(ogball)
 
     if ogball.ang==0 then
         setang(ball2,2)
@@ -367,4 +367,15 @@ function multiball()
 
     ball2.stuck=false
     ball[#ball+1]=ball2
+end
+
+
+function sign(n)
+    if n<0 then
+        return -1
+    elseif n>0 then
+        return 1
+    else
+        return 0
+    end
 end
