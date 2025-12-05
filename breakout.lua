@@ -603,6 +603,8 @@ end
 
 
 function checkexplosions()
+    --"zz": ready to explode
+    --"z": exploding....
     for i=1,#bricks do
         if bricks[i].t=="zz" and bricks[i].v then
             bricks[i].t="z"
@@ -619,9 +621,22 @@ function checkexplosions()
         end
     end
 
+    --make sure all the zz bricks to be z bricks
     for i=1,#bricks do
         if bricks[i].t=="zz" then
             bricks[i].t="z"
+        end
+    end
+end
+
+
+--explode up, down, left, right bricks
+function explodebrick(_i)
+    bricks[_i].v=false
+    for j=1,#bricks do
+        if j!=_i and bricks[j].v and abs(bricks[j].x-bricks[_i].x)<=(brick_w+2)
+        and abs(bricks[j].y-bricks[_i].y)<=(brick_h+2) then
+            hitbrick(bricks[j],false)
         end
     end
 end
