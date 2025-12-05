@@ -566,3 +566,18 @@ function boostchain()
     chain+=1
     chain=mid(1,chain,7)
 end
+
+
+--get points
+function getpoints(_p)
+    if(fastmode) _p=_p*2
+    if timer_reduce<=0 then
+        points+=_p*chain*pointsmult
+    else
+        points+=(_p*chain*pointsmult)*10
+    end
+    if points>=10000 then
+        points2+=1
+        points-=10000
+    end
+end
