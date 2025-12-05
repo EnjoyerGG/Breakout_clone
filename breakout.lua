@@ -663,3 +663,36 @@ function check_sd()
     --trigger the sudden death if rest bricks less than thresh
     if(c<=sd_thresh) trigger_sd()
 end
+
+
+function trigger_sd()
+    for i=1,#bricks do
+        if bricks[i].v==true and bricks[i].t!="i" then
+            sd_brick=bricks[i]
+            showsash("sudden death!",2,8)
+            sd_timer=450
+            sd_blinkt=sd_timer/10
+            sd_brick.fsh=4
+            sfx(29)
+        end
+    end
+end
+
+
+function update_sd()
+    if sd_brick!=nil then
+        sd_timer-=1
+        if sd_timer<1 then
+            sd_brick.t="zz"
+            sd_brick=nil
+            return
+        end
+        sd_blinkt-=1
+
+        if sd_blinkt<1 then
+            sd_brick.fsh=4
+            sd_blinkt=sd_timer/10
+            sfx(29)
+        end
+    end
+end
