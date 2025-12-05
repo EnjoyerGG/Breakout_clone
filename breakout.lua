@@ -276,7 +276,7 @@ end
 
 
 function serveball()
-    ball={}
+    ball={} --support multiple balls
     ball[1]=newball()
     local mb=ball[1]
     mb.x=pad_x
@@ -285,10 +285,11 @@ function serveball()
     mb.dy=-1
     mb.ang=1
     mb.stuck=true
-
+    --combo sys
     sd_brick=nil
     pointsmult=1
     chain=1
+
     timer_mega=0
     timer_mega_w=0
     timer_slow=0
