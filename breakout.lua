@@ -650,3 +650,16 @@ function box_box(box1_x,box1_y,box1_w,box1_h,box2_x,box2_y,box2_w,box2_h)
  if box1_x+box1_w < box2_x then return false end
  return true
 end
+
+
+--sudden death
+function check_sd()
+    local c=0
+    if(sd_brick!=nil) return
+    for i=1,#bricks do
+        if(bricks[i].v==true and bricks[i].t!="i") c+=1
+        if(c>sd_thresh) return
+    end
+    --trigger the sudden death if rest bricks less than thresh
+    if(c<=sd_thresh) trigger_sd()
+end
