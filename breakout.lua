@@ -197,12 +197,12 @@ function nextlevel()
 end
 
 
+--see the bricks as 1d array
 function buildbricks(lvl)
     local i,j,o,chr,last
     bricks={}
 
     j=0
-
     --powerups:
     --b=normal brick
     --x=empty space
@@ -219,7 +219,7 @@ function buildbricks(lvl)
         elseif chr=="x" then
             last="x"
         elseif chr=="/" then
-            j=(flr((j-1)/11)+1)*11
+            j=(flr((j-1)/11)+1)*11  --jump to next line
         elseif chr>="1" and chr<="9" then   
             for o=1,chr+0 do
                 if last=="b" or last=="i" or last=="h" or last=="s" or last=="p" then
@@ -229,7 +229,34 @@ function buildbricks(lvl)
                 end
                 j+=1
             end
-            j-=1
+            j-=1    --modify the i to the rigth position
         end
     end
+end
+
+
+
+function resetpills()
+    pill={}
+end
+
+
+function addbrick(_i,_i)
+    local _b={
+        x=4+((_i-1)%11)*(brick_w+2),
+        y=11+flr((_i-1)/11)*(brick_h+2),
+        v=true,
+        t=_t,
+        fsh=0,
+        ox=0,
+        oy=-(128+rnd(128)),
+        dx=0,
+        dy=rnd(64),
+        hp=1,
+    }
+    --strength of hardened blocks
+    if _t=="h" then
+        _b.hp=2
+    end
+    add(bricks,_b)
 end
