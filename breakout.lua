@@ -333,6 +333,8 @@ function copyball(ob)
 end
 
 
+--set ball's angle
+--prevent physical bugs
 function setang(bl,ang)
     bl.ang=ang
     if ang==2 then
@@ -345,4 +347,24 @@ function setang(bl,ang)
         bl.dx=1*sign(bl.dx)
         bl.dy=1*sign(bl.dy)
     end
+end
+
+
+function multiball()
+    local ballnum=flr(rnd(#ball))+1
+    local ogball=ball[ballnum]
+
+    ball2=copyball(ognball)
+
+    if ogball.ang==0 then
+        setang(ball2,2)
+    elseif ogball.ang==1 then
+        setang(ogball,0)
+        setang(ball2,2)
+    else
+        setang(ball2,0)
+    end
+
+    ball2.stuck=false
+    ball[#ball+1]=ball2
 end
