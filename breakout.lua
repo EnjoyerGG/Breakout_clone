@@ -75,7 +75,7 @@ function _init()
     loghs=false
 
     --typing in intitails
-    niitals={1,1,1}
+    nitials={1,1,1}
     nit_sel=1
 
     --sash
@@ -377,5 +377,39 @@ function sign(n)
         return 1
     else
         return 0
+    end
+end
+
+
+--game state
+function gameover()
+    music(7)
+    mode="gameoverwait"
+    govercountdown=60
+    blinkspeed=16
+    resethsb()
+end
+
+function levelover()
+    music(6)
+    mode="leveloverwait"
+    govercountdown=60
+    blinkspeed=16
+end
+
+function wingame()
+    music(8)
+    mode="winnerwait"
+    govercountdown=60
+    blinkspeed=16
+
+    --enough for high scores?
+    if points2>hst[5] or (points2==hst[5] and points>hs[5]) then
+        loghs=true
+        nit_sel=1
+        nit_conf=false
+    else
+        loghs=false
+        resethsb()
     end
 end
