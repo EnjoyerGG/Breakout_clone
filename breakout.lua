@@ -413,3 +413,23 @@ function wingame()
         resethsb()
     end
 end
+
+
+--release the balls
+function releasestuck()
+    for i=1,#ball do
+        if ball[i].stuck then
+            ball[i].x=mid(3,ball[i].x,124)  --clamp
+            ball[i].stuck=false
+        end
+    end
+end
+
+
+function pointstuck(sign)
+    for i=1,#ball do
+        if ball[i].stuck then
+            ball[i].dx=abs(ball[i].dx)*sign
+        end
+    end
+end
