@@ -118,3 +118,53 @@ function _init()
     --music
     music(1)
 end
+
+
+function startgame()
+    levelnum=1
+    level=levels[levelnum]
+    restartlevel()
+end
+
+
+function restartlevel()
+    mode="game"
+    
+    --ball
+    ball_r=2
+    ball_dr=0.5
+    ball_spd=1
+    if(fastmode) ball_spd=1.5
+
+    --paddle
+    pad_x=64
+    pad_y=120
+    pad_dx=0
+    pad_wo=24
+    pad_w=24
+    pad_h=6
+    pad_c=7
+
+    --bricks
+    brick_w=9
+    brick_h=4
+    buildbricks(level)
+    
+    --inital
+    lives=startlives
+    points=0
+    points2=0
+    sticky=false
+    chain=1
+
+    --timer for powerups
+    timer_mega=0
+    timer_mega_w=0
+    timer_slow=0
+    timer_expand=0
+    timer_reduce=0
+
+    --sash
+    showsash("stage "..levelnum,0,7)
+    serveball()
+end
