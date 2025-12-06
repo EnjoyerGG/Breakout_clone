@@ -917,6 +917,7 @@ end
 
 --shatter bricks effect
 function shatterbrick(_b,_vx,_vy)
+    --shake when smashing bricks
     if shake<0.5 then
         shake+=0.7
     end
@@ -924,8 +925,9 @@ function shatterbrick(_b,_vx,_vy)
 
     _b.dx=_vx*1
     _b.dy=_vy*1
+
     for _x=0,brick_w do
-        for _y,brick_h do
+        for _y=0,brick_h do
             if rnd()<0.5 then
                 local _ang=rnd()
                 local _dx=sin(_ang)*rnd(2)+(_vx/2)
@@ -934,7 +936,8 @@ function shatterbrick(_b,_vx,_vy)
             end
         end
     end
-
+    
+    --big chunks spawn
     local chunks=1+flr(rnd(10))
     if chunks>0 then
         for i=1,chunks do
@@ -943,6 +946,78 @@ function shatterbrick(_b,_vx,_vy)
             local _dy=cos(_ang)*rnd(2)+(_vy/2)
             local _spr=16+flr(rnd(14))
             addpart(_b.x,_b.y,_dx,_dy,3,80,{_spr},0)
+        end
+    end
+end
+
+--particles
+--type 0 --static pixel
+--type 1 --gravity pixel
+--type 2 --ball of smoke
+--type 3 --rotating sprite
+--type 4 --blue rotating sprite
+--type 5 --gravity smoke
+--type 6 --speedline
+
+function updateparts()
+    local _p
+    for i=#part,1,-1 do
+        _p=part[i]
+        _p.age+=1
+        if _p.age>_p.mage then
+            del(part,part[i])
+        elseif _p.x<-20 or _p.x>148 then
+            del(part,part[i])
+        elseif _p.y<-20 or _p.y>148 then
+            del(part,part[i])
+        else
+            --change colors
+            if #_p.colarr==1 then
+                _p.col=_p.colarr[1]
+            else 
+                local _ci=_p.age/_p.mage
+                _ci=1+flr(_ci*#_p.colarr)
+                _p.col=_p.colarr[_ci]
+            end
+
+            --appy gravity
+            if _p.tpe==1 or _p.tpe==3 then
+                _p.dy+=0.05
+            end
+            
+            --appy low gravity
+            if _p.tpe==5 then
+                if abs(_p.dy)<1 then
+                    _p.dy+=0.01
+                end
+            end
+
+            --rotate
+            if _p.tpe==3 or _p.tpe==4 then
+                _p.rottimer+=1
+                if _p.rottimer>5 then
+                    _p.rot+=1
+                    if _p.rot>=4 then
+                        _p.rot=0
+                    end
+                end
+            end
+
+            --shrink
+            if _p.tpe==2 or _p.tpe==5 or _p.tpe==6 then
+                local _ci=1-(_p.age/_p.mage)
+                _p.s=_ci*_p.os
+            end
+
+            --friction
+            if _p.tpe==2 or _p.tpe==6 then
+                _p.dx=_p.dx/1.2
+                _p.dy=_p.dy/1.2
+            end
+
+            --move particle
+            _p.x+=_p.dx
+            _p.y+=_p.dy
         end
     end
 end
