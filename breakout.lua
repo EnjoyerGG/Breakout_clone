@@ -726,6 +726,7 @@ function doshake()
 end
 
 
+--sash blinking...
 function doblink()
     local g_seq={3,11,7,11}
     local w_seq={5,6,7,6}
@@ -734,7 +735,6 @@ function doblink()
     blinkframe+=1
     if blinkframe>blinkspeed then
         blinkframe=0
-
         blink_g_i+=1
         if blink_g_i>#g_seq then
             blink_g_i=1
@@ -770,4 +770,46 @@ function doblink()
         af2=af2-30
     end
     arrm2=1+(2*(af2/30))
+end
+
+
+--fading
+function fadepal(_perc)
+    --0 means normal
+    --1 is completely black
+    local p=flr(mid(0,_perc,1)*100)
+
+    local kmax,col,dpal,j,k
+    dpal={
+        0,1,1,2,1,13,6,4,4,9,3,13,1,13,14
+    }
+
+    for j=1,15 do
+        col=j
+        kmax=(p+(j*1.46))/22 --darken function
+        for k=1,kmax do
+            col=dpal[col]
+        end
+        pal(j,col,1)
+    end
+end
+
+
+--particle stuff
+function addpart(_x,_y,_dx,_dy,_type,_maxage,_col,_s)
+    add(part,{
+        x=_x,
+        y=_y,
+        dx=_dx,
+        dy=_dy,
+        tpe=_type,
+        mage=_maxage,
+        age=0,
+        col=_col[1],
+        colarr=_col,
+        rot=0,
+        rottimer=0,
+        s=_s,
+        os=_s
+    })
 end
