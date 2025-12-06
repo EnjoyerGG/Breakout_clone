@@ -936,7 +936,7 @@ function shatterbrick(_b,_vx,_vy)
             end
         end
     end
-    
+
     --big chunks spawn
     local chunks=1+flr(rnd(10))
     if chunks>0 then
@@ -1018,6 +1018,47 @@ function updateparts()
             --move particle
             _p.x+=_p.dx
             _p.y+=_p.dy
+        end
+    end
+end
+
+
+--big particle drawer
+function drawparts()
+    for i=1,#part do
+        _p=part[i]
+        --pixel particle
+        if _p.tpe==0 or _p.tpe==1 then
+            pset(_p.x,_p.y,_p.col)
+        elseif _p.tpe==2 or _p.tpe==5 then
+            circfill(_p.x,_p.y,_p.s,_p.col)
+        elseif _p.tpe==3 or _p.tpe==4 then
+            local _fx,_fy
+            if _p.tpe==3 then
+                if _p.rot==2 then
+                    _fx=false
+                    _fy=true
+                elseif _p.rot==3 then
+                    _fx=true
+                    _fy=true
+                elseif _p.rot==4 then
+                    _fx=true
+                    _fy=false
+                else
+                    _fx=false
+                    _fy=false
+                end
+            elseif _p.tpe==4 then
+                pal(7,1)
+            end
+            spr(_p.col,_p.x,_p.y,1,1,_fx,_fy)
+            pal()
+        elseif _p.tpe==6 then
+            if _p.dx<0 then
+                line(_p.x,_p.y,_p.x+_p.s,_p.y,_p.col)
+            else
+                line(_p.x-_p.s,_p.y,_p.x,_p.y,_p.col)
+            end
         end
     end
 end
