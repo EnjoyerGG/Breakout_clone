@@ -824,3 +824,49 @@ function spawnpuft(_x,_y)
         addpart(_x,_y,_dx,_dy,2,15+rnd(15),{7,5,5},1+rnd(2))
     end
 end
+
+
+function spawnpillpuft(_x,_y,_p)
+    for i=0,20 do
+        local _ang=rnd()
+        local _dx=sin(_ang)*(1+rnd(2))
+        local _dy=cos(_ang)*(1+rnd(2))
+        local _mycol
+
+        if _p==1 then
+            --slowdown --orange
+            _mycol={9,9,4,4,0}
+        elseif _p==2 then
+            --life --white
+            _mycol={7,7,6,5,0}
+        elseif _p==3 then
+            --catch --green
+            _mycol={11,11,3,3,0}
+        elseif _p==4 then
+            --expand --blue
+            _mycol={12,12,5,5,0}
+        elseif _p==5 then
+            --reduce --black
+            _mycol={0,0,5,5,6}
+        elseif _p==6 then
+            --megaball --red
+            _mycol={8,8,4,2,0}
+        else
+            --multiball --yellow
+            _mycol={10,10,9,4,0}
+        end
+        addpart(_x,_y,_dx,_dy,2,20+rnd(15),_mycol,1+rnd(4))
+    end
+end
+
+
+function spawndeath(_x,_y)
+    for i=0,30 do
+        local _ang=rnd()
+        local _dx=sin(_ang)*(2+rnd(4))
+        local _dy=cos(_ang)*(2+rnd(4))
+        local _mycol
+        _mycol={10,10,9,4,0}
+    addpart(_x,_y,_dx,_dy,2,80+rnd(15),_mycol,3+rnd(6))
+    end
+end
