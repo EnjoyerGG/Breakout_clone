@@ -1202,3 +1202,155 @@ function update_sash()
         end
     end
 end
+
+
+function update_logo()
+    lcnt+=1
+    if lcnt<100 then
+        fadeto(0)
+    else 
+        fadeto(1)
+        if fadeperc==1 then
+            mode="start"
+        end
+    end
+end
+
+
+--win the game and wait for next steps
+function update_winnerwait()
+    govercountdown-=1
+    if govercountdown<=0 then
+        govercountdown=-1
+        blinkspeed=4
+        mode="winner"
+    end
+end
+
+
+function update_winner()
+    local _ang=rnd()
+    local _dx=sin(_ang)*(rnd(0.5))
+    local _dy=cos(_ang)*(rnd(0.5))
+    local _mycol={12,12,5,5,0}
+    local _toprow=40
+    local _btnrow=_toprow+52
+
+    addpart(flr(rnd(128)),_toprow,_dx,_dy,5,120+rnd(15),_mycol,3+rnd(6))
+    addpart(flr(rnd(128)),_btnrow,_dx,_dy,5,120+rnd(15),_mycol,3+rnd(6))
+
+    if govercountdown<0 then
+        if loghs then
+            if btnp(0) then
+                sfx(17)
+                nit_sel-=1
+                if nit_sel<1 then
+                    nit_sel=4
+                end
+            end
+            if btnp(1) then
+                sfx(17)
+                nit_sel+=1
+                if nit_sel>4 then
+                    nit_sel=1
+                end
+            end
+            if btnp(2) then
+                if nit_sel<4 then
+                    sfx(16)
+                    nitials[nit_sel]-=1
+                    if nitials[nit_sel]<1 then
+                        nitials[nit_sel]=#hschars
+                    end
+                end
+            end
+            if btnp(3) then
+                if nit_sel<4 then
+                    sfx(16)
+                    nitials[nit_sel]+=1
+                    if nitials[nit_sel]>#hschars then
+                        nitials[nit_sel]=1
+                    end
+                end
+            end
+            if btnp(5) then
+                if nit_sel==4 then
+                    addhs(points,points2,nitials[1],nitials[2],nitials[3])
+                    savehs()
+                    govercountdown=80
+                    blinkspeed=1
+                    sfx(15)
+                end
+            end
+        else
+            if btnp(4) then
+                govercountdown=80
+                blinkspeed=1
+                sfx(15)
+            end
+        end
+    else
+        govercountdown-=1
+        fadeperc=(80-govercountdown)/80
+        if govercountdown<=0 then
+            govercountdown=-1
+            blinkspeed=8
+            mode="start"
+            part={}
+            startparts()
+            hs_x=128
+            hs_dx=0
+        end
+    end
+end
+
+
+function update_start()
+    --raining particles
+    parttimer=parttimer+1
+    spawnbgparts(true,parttimer)
+    --slide the high score list
+    if hs_x~=hs_dx then
+        hs_x+=(hs_dx-hs_x)/5
+        if abs(hs_dx-hs_x)<0.3 then
+            hs_x=hs_dx
+        end
+    end
+
+    if startcountdown<0 then
+        --fade in game
+        if not(pirate) then
+            if btnp(5) then
+                startcountdown=80
+                blinkspeed=1
+                sfx(12)
+                music(-1,2000)
+            end
+            if btnp(3) or btnp(2) then
+                fastmode=not fastmode
+                sfx(16)
+            end
+            if btnp(0) then
+                if hs_dx==128 then
+                    hs_dx=0
+                    sfx(20)
+                end
+            end
+            if btnp(1) then
+                if hs_dx==0 then
+                    hs_dx=128
+                    sfx(20)
+                end
+            end
+        end
+    else
+        startcountdown-=1
+        fadeperc=(80-startcountdown)/80
+        if startcountdown<=0 then
+            startcountdown-=1
+            blinkspeed=8
+            part={}
+            startgame()
+        end
+    end
+end
