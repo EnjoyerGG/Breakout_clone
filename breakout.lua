@@ -1354,3 +1354,69 @@ function update_start()
         end
     end
 end
+
+
+function update_gameover()
+    local _ang=rnd()
+    local _dx=sin(_ang)*(rnd(0.3))
+    local _dy=cos(_ang)*(rnd(0.3))
+    local _mycol={0,0,2,8}
+    local _toprow=60
+    local _btnrow=81
+
+    addpart(flr(rnd(128)),_toprow,_dx,_dy,5,70+rnd(15),_mycol,3+rnd(6))
+    addpart(flr(rnd(128)),_btnrow,_dx,_dy,5,70+rnd(15),_mycol,3+rnd(6))
+
+    if govercountdown<0 then
+        if btnp(5) or btnp(1) then
+            govercountdown=80
+            blinkspeed=1
+            sfx(12)
+            goverrestart=true
+        end
+        if btnp(4) or btnp(0) then
+            govercountdown=80
+            blinkspeed=1
+            sfx(12)
+            goverrestart=false
+        end
+    else
+        govercountdown-=1
+        fadeperc=(80-govercountdown)/80
+        if govercountdown<=0 then
+            if goverrestart then
+                govercountdown=-1
+                blinkspeed=8
+                part={}
+                restartlevel()
+            else
+                govercountdown=-1
+                blinkspeed=8
+                mode="start"
+                part={}
+                startparts()
+                hs_x=128
+                hs_dx=128
+                music(1)
+            end
+        end
+    end
+end
+
+
+function update_gameoverwait()
+    govercountdown-=1
+    if govercountdown<=0 then
+        govercountdown=-1
+        mode="gameover"
+    end
+end
+
+
+function update_leveloverwait()
+    govercountdown-=1
+    if govercountdown<=0 then
+        govercountdown=-1
+        mode="levelover"
+    end
+end
