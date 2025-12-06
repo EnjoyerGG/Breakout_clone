@@ -803,13 +803,24 @@ function addpart(_x,_y,_dx,_dy,_type,_maxage,_col,_s)
         dx=_dx,
         dy=_dy,
         tpe=_type,
-        mage=_maxage,
+        mage=_maxage,   --duration
         age=0,
-        col=_col[1],
+        col=_col[1],    --color
         colarr=_col,
-        rot=0,
+        rot=0,  --rotate
         rottimer=0,
         s=_s,
         os=_s
     })
+end
+
+
+--ball hit the paddle will raise the puft
+function spawnpuft(_x,_y)
+    for i=0,5 do
+        local _ang=rnd()
+        local _dx=sin(_ang)*1
+        local _dy=cos(_ang)*1
+        addpart(_x,_y,_dx,_dy,2,15+rnd(15),{7,5,5},1+rnd(2))
+    end
 end
