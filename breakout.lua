@@ -1168,3 +1168,37 @@ function _update60()
 end
 
 
+function update_sash()
+    if sash_v then
+        sash_frames+=1
+        if sash_delay_w>0 then
+            sash_delay_w-=1
+        else
+            sash_w+=(sash_dw-sash_w)/5
+            if abs(sash_dw-sash_w)<0.3 then
+                sash_w=sash_dw
+            end
+        end
+
+        --animate text
+        if sash_delay_t>0 then
+            sash_delay_t-=1
+        else 
+            sash_tx+=(sash_tdx-sash_tx)/10
+            if abs(sash_tx-sash_tdx)<0.3 then
+                sash_tx=sash_tdx
+            end
+        end
+
+        --make sash go away
+        if sash_frames==75 then
+            sash_dw=0
+            sash_tdx=160
+            sash_delay_w=15
+            sash_delay_t=0
+        end
+        if sash_frames>115 then
+            sash_v=false
+        end
+    end
+end
