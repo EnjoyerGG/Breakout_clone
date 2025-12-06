@@ -724,3 +724,50 @@ function doshake()
         shake=0
     end
 end
+
+
+function doblink()
+    local g_seq={3,11,7,11}
+    local w_seq={5,6,7,6}
+    local b_seq={9,10,7,10,9}
+    local r_seq={8,9,10,11,12}
+    blinkframe+=1
+    if blinkframe>blinkspeed then
+        blinkframe=0
+
+        blink_g_i+=1
+        if blink_g_i>#g_seq then
+            blink_g_i=1
+        end
+        blink_g=g_seq[blink_g_i]
+
+        blink_w_i+=1
+        if blink_w_i>#w_seq then
+            blink_w_i=1
+        end
+        blink_w=w_seq[blink_w_i]
+
+        blink_b_i+=1
+        if blink_b_i>#b_seq then
+            blink_b_i=1
+        end
+        blink_b=b_seq[blink_b_i]
+
+        blink_r=r_seq[flr(#r_seq*rnd()+1)]
+    end
+
+    --trajectory preview anim
+    --first dot
+    arrmframe+=1
+    if arrmframe>30 then
+        arrmframe=0
+    end
+    arrm=1+(2*(arrmframe/30))
+
+    --second dot
+    local af2=arrmframe+15
+    if af2>30 then
+        af2=af2-30
+    end
+    arrm2=1+(2*(af2/30))
+end
