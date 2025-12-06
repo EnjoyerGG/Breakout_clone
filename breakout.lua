@@ -1094,3 +1094,43 @@ function animatebricks()
         end
     end
 end
+
+function startparts()
+    for i=0,300 do
+        spawnbgparts(false,i)
+    end
+end
+
+function spawnbgparts(_top,_t)
+    if _t%30==0 then
+        if partrow==0 then
+            partrow=1
+        else
+            partrow=0
+        end
+        for i=0,8 do
+            if _top then
+                _y=-8
+            else
+                _y=-8+0.4*_t
+            end
+            if(i+partrow)%2==0 then
+                addpart(i*16,_y,0,0.4,0,10000,{1},0)
+            else
+                local _spr=16+flr(rnd(14))
+                addpart((i*16)-4,_y-4,0,0.4,4,10000,{_spr},0)
+            end
+        end
+    end
+
+    if _t%15==0 then
+        if _top then
+            _y=-8
+        else
+            _y=-8+0.8*_t
+        end
+        for i=0,8 do
+            addpart(8+i*16,_y,0,0.8,0,10000,{1},0)
+        end
+    end
+end
