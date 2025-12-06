@@ -1101,6 +1101,7 @@ function startparts()
     end
 end
 
+--falling particles effects
 function spawnbgparts(_top,_t)
     if _t%30==0 then
         if partrow==0 then
@@ -1134,3 +1135,36 @@ function spawnbgparts(_top,_t)
         end
     end
 end
+
+
+
+
+--update functions
+--main function
+function _update60()
+    doblink()
+    doshake()
+    updateparts()
+    update_sash()
+    if mode=="game" then
+        update_game()
+    elseif mode=="logo" then
+        update_logo()
+    elseif mode=="start" then
+        update_start()
+    elseif mode=="gameover" then
+        update_gameover()
+    elseif mode=="gameoverwait" then
+        update_gameoverwait()
+    elseif mode=="levelover" then
+        update_levelover()
+    elseif mode=="leveloverwait" then
+        update_leveloverwait()
+    elseif mode=="winner" then
+        update_winner()
+    elseif mode=="winnerwait" then
+        update_winnerwait()
+    end
+end
+
+
