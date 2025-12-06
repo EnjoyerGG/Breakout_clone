@@ -903,3 +903,46 @@ function spawntrail(_x,_y)
         addpart(_x+_ox,_y+_oy,0,0,0,15+rnd(15),{10,9},0)
     end
 end
+
+
+function spawnspeedline(_x,_y)
+    if rnd()<0.2 then
+        local _ang=rnd()
+        local _ox=sin(_ang)*ball_r
+        local _oy=cos(_ang)*ball_r
+        addpart(_x+_ox,_y+_oy,0,0,2,60+rnd(15),{8,2,0},1+rnd(1))
+    end
+end
+
+
+--shatter bricks effect
+function shatterbrick(_b,_vx,_vy)
+    if shake<0.5 then
+        shake+=0.7
+    end
+    sfx(13)
+
+    _b.dx=_vx*1
+    _b.dy=_vy*1
+    for _x=0,brick_w do
+        for _y,brick_h do
+            if rnd()<0.5 then
+                local _ang=rnd()
+                local _dx=sin(_ang)*rnd(2)+(_vx/2)
+                local _dy=cos(_ang)*rnd(2)+(_vy/2)
+                addpart(_b.x+_x,_b.y+_y,_dx,_dy,1,80,{7,6,5},0)
+            end
+        end
+    end
+
+    local chunks=1+flr(rnd(10))
+    if chunks>0 then
+        for i=1,chunks do
+            local _ang=rnd()
+            local _dx=sin(_ang)*rnd(2)+(_vx/2)
+            local _dy=cos(_ang)*rnd(2)+(_vy/2)
+            local _spr=16+flr(rnd(14))
+            addpart(_b.x,_b.y,_dx,_dy,3,80,{_spr},0)
+        end
+    end
+end
