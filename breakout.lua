@@ -870,3 +870,26 @@ function spawndeath(_x,_y)
     addpart(_x,_y,_dx,_dy,2,80+rnd(15),_mycol,3+rnd(6))
     end
 end
+
+
+--explosion particles
+function spawnexplosion(_x,_y)
+    sfx(14)
+    for i=0,20 do
+        local _ang=rnd()
+        local _dx=sin(_ang)*(rnd(4))
+        local _dy=cos(_ang)*(rnd(4))
+        local _mycol
+        _mycol={0,0,5,5,6}
+        addpart(_x,_y,_dx,_dy,2,80+rnd(15),_mycol,3+rnd(6))
+    end
+
+    for i= 0,30 do
+    local _ang = rnd()
+    local _dx = sin(_ang)*(1+rnd(4))
+    local _dy = cos(_ang)*(1+rnd(4))
+    local _mycol
+    _mycol={7,10,9,8,5}
+    addpart(_x,_y,_dx,_dy,2,30+rnd(15),_mycol,2+rnd(4))
+    end
+end
