@@ -893,3 +893,13 @@ function spawnexplosion(_x,_y)
     addpart(_x,_y,_dx,_dy,2,30+rnd(15),_mycol,2+rnd(4))
     end
 end
+
+--ball trail
+function spawntrail(_x,_y)
+    if rnd()<0.5 then
+        local _ang=rnd()
+        local _ox=sin(_ang)*ball_r*0.3
+        local _oy=cos(_ang)*ball_r*0.3
+        addpart(_x+_ox,_y+_oy,0,0,0,15+rnd(15),{10,9},0)
+    end
+end
