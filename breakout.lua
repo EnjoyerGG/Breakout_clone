@@ -1062,3 +1062,35 @@ function drawparts()
         end
     end
 end
+
+
+function animatebricks()
+    for i=1,#bricks do
+        local _b=bricks[i]
+        if _b.v or _b.fsh>0 then
+            if _b.dx~=0 or _b.dy~=0 or _b.ox~=0 or _b.oy~=0 then
+                _b.ox+=_b.dx
+                _b.oy+=_b.dy
+                
+                _b.dx-=_b.ox/10
+                _b.dy-=_b.oy/10
+
+                if abs(_b.dx)>(_b.ox) then
+                    _b.dx=_b.dx/1.3
+                end
+                if abs(_b.dy)>(_b.oy) then
+                    _b.dy=_b.dy/1.3
+                end
+
+                if abs(_b.ox)<0.2 and abs(_b.dx)<0.25 then
+                    _b.ox=0
+                    _b.dx=0
+                end
+                if abs(_b.oy)<0.2 and abs(_b.dy)<0.25 then
+                    _b.oy=0
+                    _b.dy=0
+                end
+            end
+        end
+    end
+end
