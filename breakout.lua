@@ -1587,3 +1587,297 @@ function update_game()
     --animate bricks
     animatebricks()  
 end
+
+
+
+--draw function
+function _draw()
+    if mode=="game" then
+        draw_game()
+    elseif mode=="logo" then
+        draw_logo()
+    elseif mode=="start" then
+        draw_start()
+    elseif mode=="gameoverwait" then
+        draw_game() 
+    elseif mode=="gameover" then
+        draw_gameover()
+    elseif mode=="levelover" then
+        draw_levelover()
+    elseif mode=="leveloverwait" then
+        draw_game()
+    elseif mode=="winner" then
+        draw_winner()
+    elseif mode=="winnerwait" then
+        draw_game() 
+    end
+    -- fade the screen
+    pal()
+    if fadeperc ~= 0 then
+        fadepal(fadeperc)
+    end
+end
+ 
+function draw_logo()
+    cls(12)
+    --rect(0,0,128,128,12)
+    sspr(56,32,50,50,39,39)
+end
+ 
+function draw_sash()
+    local _c,i
+    if sash_v then
+        if sash_c==-1 then
+            _c = blink_r
+        else
+        _c = sash_c
+        end
+        rectfill(0,64-sash_w,128,64+sash_w,_c)
+        print(sash_text,sash_tx,62,sash_tc)
+        clip(0,64-sash_w,128,sash_w*2+1)
+        for i=1,#ball do
+            circfill(ball[i].x,ball[i].y,2,sash_tc)
+        end
+        clip()
+    end
+end
+ 
+function draw_winner()
+    -- draw game underneath sash
+    draw_game()
+ 
+    if loghs then
+        --won. type in name
+        --for highscore list
+        local _y=40
+        rectfill(0,_y,128,_y+52,12)
+        print("★congratulations!★",26,_y+4,1)
+        print("you have beaten the game",15,_y+14,7)
+        print("enter your initials",15,_y+20,7)
+        print("for the high score list.",15,_y+26,7)
+        local _colors = {7,7,7,7}
+        _colors[nit_sel] = blink_b
+        print(hschars[nitials[1]],53,_y+34,_colors[1])
+        print(hschars[nitials[2]],57,_y+34,_colors[2])
+        print(hschars[nitials[3]],61,_y+34,_colors[3])
+        print("ok",69,_y+34,_colors[4])
+ 
+        print("use ⬅️➡️⬆️⬇️❎",35,_y+42,6)
+    else
+        --won but no highscore
+        local _y=40
+        rectfill(0,_y,128,_y+52,12)
+        print("★congratulations!★",26,_y+4,1)
+        print("you have beaten the game",15,_y+14,7)
+        print("but your score is too low",15,_y+20,7)
+        print("for the high score list.",15,_y+26,7)
+        print("try again!",15,_y+32,7)
+ 
+        print("press ❎ for main menu",20,_y+42,blink_b)
+    end
+end
+ 
+function draw_start()
+    cls()
+ 
+    -- particles
+    drawparts()
+ 
+    --draw logo
+    palt(14,true)
+    spr(64,(hs_x-128)+36,10,7,5)
+    palt()
+    print("game dev tutorial at",25+(hs_x-128),50,2)
+    print("youtube.com/lazydevs",25+(hs_x-128),56,2)
+ 
+    print("music by grubermusic",25+(hs_x-128),64,2)
+    print("patreon.com/gruber99",25+(hs_x-128),70,2)
+ 
+    prinths(hs_x)
+    if hs_x>=0 and not(pirate) then
+        if fastmode then
+            print("fast mode",46,84,blink_w)
+        end  
+ 
+        print("press ❎ to start",30,92,blink_g)
+        print("press ⬆️⬇️ to toggle fast mode",4,115,3)
+        if hs_x==128 then
+            print("press ⬅️ for high score list",9,109,3)
+        end
+    end
+ 
+    if (pirate) print(stat(102),9,109,1)
+end
+ 
+function draw_gameover()
+    -- draw particles
+    draw_game()
+ 
+    local _c1, _c2
+    rectfill(0,60,128,81,0)
+    print("game over",46,62,7)
+    if govercountdown<0 then
+        _c1=blink_w
+        _c2=blink_w
+    else
+        if goverrestart then
+            _c1=blink_w
+            _c2=5
+        else
+            _c2=blink_w
+            _c1=5
+        end
+    end
+    print("press ❎ or ➡️ to retry level",8,68,_c1)
+    print("press 🅾️ or ⬅️ for main menu",8,74,_c2)
+end
+ 
+function draw_levelover()
+    draw_game()
+ 
+    rectfill(0,60,128,75,12)
+    print("stage clear!",46,62,1)
+    print("press ❎ or ➡️ to continue",12,68,blink_b)
+end
+ 
+function draw_game()
+    local i
+    cls()
+    --cls(1)
+    rectfill(0,0,127,127,1)
+ 
+    --draw brick
+    local _bsprite=false
+    local _bspritex=64
+ 
+    for i=1,#bricks do
+        local _b=bricks[i]
+        if _b.v or _b.fsh>0 then
+            if _b.fsh>0 then
+                brickcol = 7
+                _b.fsh-=1
+            elseif _b.t == "b" then
+                brickcol = 14
+                _bsprite=false
+            elseif _b.t == "i" then
+                brickcol = 6
+                _bsprite=true
+                _bspritex=74
+            elseif _b.t == "h" then
+                brickcol = 15
+                _bsprite=true
+                _bspritex=94
+            elseif _b.t == "s" then
+                brickcol = 9
+                _bsprite=true
+                _bspritex=64
+            elseif _b.t == "p" then
+                brickcol = 12
+                _bsprite=true
+                _bspritex=84
+            elseif _b.t == "z" or bricks[i].t == "zz" then
+                brickcol = 7
+            end
+            local _bx = _b.x+_b.ox
+            local _by = _b.y+_b.oy
+            if _bsprite and _b.fsh==0 then
+                palt(0,false)
+                sspr(_bspritex,0,10,5,_bx,_by)
+                palt()
+            else
+                rectfill(_bx,_by,_bx+brick_w,_by+brick_h,brickcol)
+            end 
+        end
+    end 
+ 
+    -- particles
+    drawparts()
+ 
+    -- pills
+    for i=1,#pill do
+        palt(0,false)
+        palt(13,true)
+        spr(pill[i].t,pill[i].x,pill[i].y)
+        palt()
+    end
+ 
+    -- balls
+    for i=1,#ball do
+        local _ballspr=34
+        if timer_mega_w>0 or timer_mega>0 then
+            _ballspr=35
+        end
+        palt(1,true)
+        spr(_ballspr,ball[i].x-3,ball[i].y-3)
+        palt()
+        if ball[i].stuck then
+            -- draw trajectory preview dots
+            pset(ball[i].x+ball[i].dx*4*arrm,
+                ball[i].y+ball[i].dy*4*arrm,
+            10)
+            pset(ball[i].x+ball[i].dx*4*arrm2,
+                ball[i].y+ball[i].dy*4*arrm2,
+            10) 
+        end
+    end
+ 
+    --pad
+    local _px=pad_x-(pad_w/2)
+    palt(1,true)
+    if not(sticky) then
+        sspr(0,16,5,6,_px,pad_y)
+        sspr(8,16,5,6,_px+pad_w-4,pad_y)
+        for i=5,pad_w-5 do
+            sspr(5,16,1,6,_px+i,pad_y)
+        end 
+    else
+        sspr(0,24,6,8,_px-1,pad_y-1)
+        sspr(9,24,6,8,_px+pad_w-4,pad_y-1)
+        for i=5,pad_w-5 do
+            sspr(6,24,1,8,_px+i,pad_y-1)
+        end 
+    end
+ 
+    palt()
+ 
+    --ui
+    rectfill(0,0,128,6,0)
+    if debug!="" then
+        print(debug,1,1,7)  
+    else
+        print("lives:"..lives,1,1,7)
+        print("score:"..pointstring(points2,points),60,1,7)
+        local _ct=chain.."x"
+        local _cc=7
+        if timer_reduce>0 then
+            _ct=(chain*10).."x"
+            _cc=8
+        end
+        print(_ct,126-(#_ct*4),1,_cc)
+    end
+ 
+    draw_sash()
+end
+ 
+function pointstring(s2,s1)
+    if (s1==0 and s2==0) return "0"
+    local ret=""
+    if s2>0 then
+        ret=ret..s2
+        if s1==0 then
+            ret=ret.."0000"
+        elseif s1<10 then
+            ret=ret.."000"..s1
+        elseif s1<100 then
+            ret=ret.."00"..s1
+        elseif s1<1000 then
+            ret=ret.."0"..s1
+        else
+            ret=ret..s1
+        end
+    else
+        ret=ret..s1
+    end
+    ret=ret.."0"
+    return ret
+end
