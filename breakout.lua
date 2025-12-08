@@ -1881,3 +1881,144 @@ function pointstring(s2,s1)
     ret=ret.."0"
     return ret
 end
+
+
+
+--highscore tab
+--add a new high score
+function addhs(_score,_score2,_c1,_c2,_c3)
+    add(hs,_score)
+    add(hst,_score2)
+    add(hs1,_c1)
+    add(hs2,_c2)
+    add(hs3,_c3)
+    for i=1,#hsb do
+        hsb[i]=false
+    end
+    add(hsb,true)
+    sorths()
+end
+
+
+function resethsb()
+    for i=1,#hsb do
+        hsb[i]=false
+    end
+    hsb[1]=true
+end
+
+
+--sort high score list
+function sorths()
+    for i=1,#hs do
+        local j=i
+        while j>1 and ((hst[j-1]==hst[j] and hs[j-1]<hs[j]) or hst[j-1]<hst[j]) do
+            hs[j],hs[j-1]=hs[j-1],hs[j]
+            hst[j],hst[j-1]=hst[j-1],hst[j]
+            hs1[j],hs1[j-1]=hs1[j-1],hs1[j]
+            hs2[j],hs2[j-1]=hs2[j-1],hs2[j]
+            hs3[j],hs3[j-1]=hs3[j-1],hs3[j]
+            hsb[j],hsb[j-1]=hsb[j-1],hsb[j]
+            j=j-1
+        end
+    end
+end
+
+--resets the high socre list
+function reseths()
+    --create default values
+    hs={300,200,100,50,25}
+    hst={0,0,0,0,0}
+    hs1={11,11,11,11,11}
+    hs2={18,18,18,18,18}
+    hs3={19,19,19,19,19}
+    hsb={true,false,false,false,false}
+
+    sorths()
+    savehs()
+end
+
+
+--load the highscore list
+function loadhs()
+    local _slot=0
+
+    if dget(0)==1 then
+        --load the data
+        _slot+=1
+        for i=1,5 do
+            hs[i]=dget(_slot)
+            hst[i]=dget(_slot+1)
+            hs1[i]=dget(_slot+2)
+            hs2[i]=dget(_slot+3)
+            hs3[i]=dget(_slot+4)
+            _slot+=5
+        end
+        sorths()
+    else
+        --file is empty
+        reseths()
+    end
+end
+
+
+--save the high score list
+function savehs()
+    local _slot
+    dset(0,1)
+    --load the data
+    _slot=1
+    for i=1,5 do
+        dset(_slot,hs[i])
+        dset(_slot+1,hst[i])
+        dset(_slot+2,hs1[i])
+        dset(_slot+3,hs2[i])
+        dset(_slot+4,hs3[i])
+        _slot+=5
+    end
+end
+
+
+--prints the high score list
+function prinths(_x)
+    rectfill(_x+29,8,_x+99,16,8)
+    print("high score list",_x+36,10,7)
+
+    for i=1,5 do
+        --number of rank
+        print(i.." - ",_x+30,14+7*i,5)
+        --name 
+        local _c=7
+        if hsb[i] then
+            _c=blink_w
+        end
+        local _name = hschars[hs1[i]]
+        _name=_name..hschars[hs2[i]]
+        _name=_name..hschars[hs3[i]]
+
+        print(_name,_x+45,14+7*i,_c)
+
+        --actual score
+        local _score=" "..pointstring(hst[i],hs[i])
+        print(_score,(_x+100)-(#_score*4),14+7*i,_c)
+    end
+end
+
+
+
+--nu collision
+function intercept(_x1,_y1,_x2,_y2,_x3,_y3,_x4,_y4,_d)
+    _denom=((_y4-_y3)*(_x2-_x1))-((_x4-_x3)*(_y2-_y1))
+    if _denom!=0 then
+        _ua=(((_x4-_x3)*(_y1-_y3))-((_y4-_y3)*(_x1-_x3)))/_denom
+        if _ua>=0 and _ua<=1 then
+            _ub=(((_x2-_x1)*(_y1-_y3))-((_y2-_y1)*(_x1-_x3)))/_denom
+            if _ub>=0 and _ub<=1 then
+                _x = _x1+(_ua * (_x2-_x1))
+                _y = _y1+(_ua * (_y2-_y1))
+                return {x=_x,y=_y,d=_d}
+            end
+        end
+    end
+    return nil
+end
