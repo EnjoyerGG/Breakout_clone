@@ -1420,3 +1420,44 @@ function update_leveloverwait()
         mode="levelover"
     end
 end
+
+
+function update_levelover()
+    local _ang=rnd()
+    local _dx=sin(_ang)*(rnd(0.3))
+    local _dy=cos(_ang)*(rnd(0.3))
+    local _mycol={12,12,5,5,0}
+    local _toprow=60
+    local _btnrow=75
+    addpart(flr(rnd(128)),_toprow,_dx,_dy,5,70+rnd(15),_mycol,3+rnd(6))
+    addpart(flr(rnd(128)),_btnrow,_dx,_dy,5,70+rnd(15),_mycol,3+rnd(6))
+
+    if govercountdown<0 then
+        if btnp(5) or btnp(1) then
+            govercountdown=80
+            blinkspeed=1
+            sfx(15)
+        end
+    else
+        govercountdown-=1
+        fadeperc=(80-govercountdown)/80
+        if govercountdown<=0 then
+            govercountdown= -1
+            blinkspeed=8
+            part={}
+            nextlevel()
+        end 
+    end
+end
+
+
+function fadeto(_f)
+    --fade in game
+    if fadeperc!=_f then
+        if abs(fadeperc-_f)<0.05 then
+            fadeperc=_f
+        else
+            fadeperc=fadeperc+(0.05*sgn(_f-fadeperc))
+        end
+    end
+end
