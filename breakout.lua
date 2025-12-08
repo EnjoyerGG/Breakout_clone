@@ -2022,3 +2022,369 @@ function intercept(_x1,_y1,_x2,_y2,_x3,_y3,_x4,_y4,_d)
     end
     return nil
 end
+
+
+function ballintercept(_b,_box,_nx,_ny)
+    local _pt=nil
+    if _ny<_b.y then
+        _pt=intercept(
+            _b.x,_b.y,_nx,_ny,
+            _box.left-ball_r,
+            _box.bottom+ball_r,
+            _box.right+ball_r,
+            _box.bottom+ball_r,
+            "bottom"
+        )
+    elseif _ny>_b.y then
+        _pt=intercept(
+            _b.x,_b.y,_nx,_ny,
+            _box.left-ball_r,
+            _box.top-ball_r,
+            _box.right+ball_r,
+            _box.top-ball_r,
+            "top"
+        )
+    end
+
+    if _pt==nil then
+        if _nx<_b.x then
+            _pt=intercept(
+                _b.x,_b.y,_nx,_ny,
+                _box.right+ball_r,
+                _box.top-ball_r,
+                _box.right+ball_r,
+                _box.bottom+ball_r,
+                "right"
+            )
+        elseif _nx>_b.x then
+            _pt=intercept(
+                _b.x,_b.y,_nx,_ny,
+                _box.left-ball_r,
+                _box.top-ball_r,
+                _box.left+ball_r,
+                _box.bottom+ball_r,
+                "left"
+            )
+        end
+    end
+    return _pt
+end
+
+
+function updateball(bi)
+    myball=ball[bi]
+    if myball.stuck then
+        myball.x=pad_x+sticky_x
+        myball.y=pad_y-ball_r-1
+        infcounter=0
+    else
+        --regular ball physics
+        if timer_slow>0 then
+            nextx=myball.x+(myball.dx/2*ball_spd)
+            nexty=myball.x+(myball.dy/2*ball_spd)
+        else
+            nextx=myball.x+myball.dx*ball_spd
+            nexty=myball.x+myball.dy*ball_spd
+        end
+
+        local _cols={}
+        local _mcols={}
+        local _tmpcol=nil
+        local _box
+        --check of ball hit wall
+        _tmpcol=ballintercept(myball,screenbox,nextx,nexty)
+        if _tmpcol~=nil then
+            _tmpcol.t="wall"
+            add(_cols,_tmpcol)
+        end
+
+          --collision with pad
+        _box=getpadbox()
+        _tmpcol=ballintercept(myball,_box,nextx,nexty)
+        if _tmpcol~=nil then
+            _tmpcol.t="pad"
+            add(_cols,_tmpcol)
+        end
+
+         --collision with bricks
+        for i=1,#bricks do
+            -- check if ball hit brick
+            if bricks[i].v then
+                _box=getbrickbox(bricks[i])
+                _tmpcol=ballintercept(myball,_box,nextx,nexty)
+                if _tmpcol~=nil then
+                    _tmpcol.t="brick"
+                    _tmpcol.brick=bricks[i]
+                    if ((timer_mega > 0 or timer_mega_w>0) and bricks[i].t=="i") 
+                    or (timer_mega<=0 and timer_mega_w<=0) then     
+                        add(_cols,_tmpcol)
+                    else
+                        add(_mcols,_tmpcol)
+                    end
+                end
+            end
+        end
+
+        --save speed before collision
+        lasthitx=myball.dx
+        lasthity=myball.dy  
+  
+        --see if there is collisions
+        if #_cols==0 then
+            --no collisions
+            myball.x=nextx
+            myball.y=nexty   
+        else
+            -- some collision
+            local _coli=1
+            if #_cols>1 then
+                -- more than one collisiom
+                -- find the closest
+                local _coldst=coldist(myball,_cols[1])
+                for i=2,#_cols do
+                    local _dst=coldist(myball,_cols[i])
+                    if _dst<_coldst then
+                        _coldst=_dst
+                        _coli=i
+                    end
+                end
+            end
+            --deal with the collision
+            collide(myball,_cols[_coli]) 
+        end
+  
+        -- do megaball collisions
+        if #_mcols>0 then
+            for i=1,#_mcols do
+                hitbrick(_mcols[i].brick,true)
+            end
+        end
+  
+        --trail particles
+        if timer_mega > 0 or timer_mega_w > 0 then
+            spawnmtrail(myball.x,myball.y)
+        else
+            spawntrail(myball.x,myball.y)
+        end
+  
+        -- check if ball left screen
+        if myball.y > 127 then
+            sfx(2)
+            spawndeath(myball.x,myball.y)
+            if #ball > 1 then
+                shake+=0.15
+                del(ball,myball)
+            else
+                sd_brick=nil
+                shake+=0.4
+                lives-=1
+                if lives<0 then
+                    lives=0
+                    gameover()
+                else
+                    serveball()
+                end
+            end
+        end
+  
+        -- check if ball is stuck
+        if myball.colcount > 60 then
+            spawndeath(myball.x,myball.y)
+            releasestuck()
+            del(ball,myball)
+            serveball()
+        end 
+    end -- end of sticky if
+end
+
+
+function collide(_b,_c)
+    --set position
+    _b.x=_c.x
+    _b.y=_c.y
+    _b.colcount+=1
+
+    if _c.t=="wall" then
+        --wall collision
+        reflect(_b,_c.d)
+        --puft and sound
+        checkinf(_b)
+        spawnpuft(_b.x,_b.y)
+        sfx(0)
+    elseif _c.t=="pad" then
+        --pad collision
+        local bend,angf=false,false
+        chain=1
+        infcounter=0
+        check_sd()
+        --hit side. save?
+        if _c.d=="left" or _c.d=="right" then
+            if _b.y+ball_r>pad_y+3 then
+                --lost ball
+                _b.rammed=true
+            else
+                bend=true
+                angf=false
+                _c.d="top"
+                _b.y=pad_y-ball_r
+            end
+        end
+        reflect(_b,_c.d)
+
+        --change angle
+        if _c.d=="top" then
+            --change angle
+            if bend==false and abs(pad_dx)>1 then
+                bend=true
+                if sign(pad_dx)==sign(_b.dx) then
+                    angf=false
+                end
+            end
+            if bend then
+                if angf then
+                    --flatten angle
+                    setang(_b,mid(0,_b.ang-1,2))
+                else
+                    --raise angle
+                    if _b.ang==2 then
+                        _b.dx=-_b.dx
+                    else
+                        setang(_b,mid(0,_b.ang+1,2))
+                    end
+                end
+            end
+            --reset pos
+            _b.y=pad_y-ball_r-1
+
+            --catch powerup
+            if sticky then
+                releasestuck()
+                sticky=false
+                _b.stuck=true
+                sticky_x=_b.x-pad_x
+            end
+        end
+        --puft and sound
+        sfx(1)
+        spawnpuft(_b.x,_b.y)
+    elseif _c.t=="brick" then
+        --brick collision
+        if _b.collast==nil then
+            _b.collast=_c.brick
+        else
+            if _b.collast!=_c.brick then
+                _b.colcount=0
+            end
+        end
+        reflect(_b,_c.d)
+        checkinf(_b)
+        hitbrick(_c.brick,true)
+        if _c.brick.t=="i" then
+            spawnpuft(_b.x,_b.y)
+        end
+    end
+end
+
+
+function reflect(_b,_d)
+    --reflect ball
+    if _d=="left" or _d=="right" then
+        _b.dx=-_b.dx
+    else
+        _b.dy=-_b.dy
+    end
+end
+
+function checkinf(_b)
+    if infcounter>600 then
+        infcounter=0
+        local _nuang
+        repeat
+            _nuang=flr(rnd(3))
+        until _nuang~=_b.ang
+        setang(_b,_nuang)
+    end
+end
+
+
+function coldist(_b,_col)
+    return dist(_b.x,_b.y,_col.x,_col.y)
+end
+
+
+function dist(x1,y1,x2,y2)
+    local dx = x1 - x2
+    local dy = y1 - y2
+    return sqrt(dx*dx+dy*dy)
+end
+
+
+function getpadbox()
+    local _l=flr(pad_x-(pad_w/2))
+    local _r=_l+pad_w
+    local _t=pad_y
+    local _b=pad_y+pad_h
+    return {left=_l,right=_r,top=_t,bottom=_b} 
+end
+
+
+function getbrickbox(_b)
+    local _l=_b.x
+    local _r=_b.x+brick_w
+    local _t=_b.y
+    local _b=_b.y+brick_h
+    return {left=_l,right=_r,top=_t,bottom=_b} 
+end
+
+
+function padramcheck(_b)
+    if _b.stuck then
+        return
+    end
+
+    local _pbox=getpadbox()
+    if box_box(
+        _pbox.left+1,
+        _pbox.top+1,
+        pad_w-2,
+        pad_w,
+        _b.x-ball_r,
+        _b.y-ball_r,
+        ball_r*2,
+        ball_r*2
+    ) then
+        if _b.dy<0 then
+            --ball flying up
+            return
+        end
+
+        if _b.y+ball_r>pad_y+3 then
+            --change speed of the ball
+            if sign(_b.dx)==sign(pad_dx) then
+                _b.dx+=pad_dx
+            else
+                _b.dx=-_b.dx
+                _b.dx+=pad_dx
+            end
+            --reset ball position
+            if _b.x<pad_x then
+                _b.x=_pbox.left-ball_r
+            else
+                _b.x=_pbox.right+ball_r
+            end
+            --puft and sound
+            if _b.rammed~=true then
+                sfx(1)
+                spawnpuft(_b.x,_b.y)
+                _b.rammed=true
+            end
+        else
+            local _c={}
+            _c.d="top"
+            _c.t="pad"
+            _c.x=_b.x
+            _c.y=_b.y
+            collide(_b,_c)
+        end
+    end
+end
