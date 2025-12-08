@@ -1496,7 +1496,7 @@ function update_game()
     end
     if btn(1) then
         --right
-        pad_dw=2.5
+        pad_dx=2.5
         buttpress=true
         pointstuck(1)
     end
