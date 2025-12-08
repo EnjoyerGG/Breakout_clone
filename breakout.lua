@@ -1461,3 +1461,129 @@ function fadeto(_f)
         end
     end
 end
+
+
+
+function update_game()
+    local buttpress=false
+    local nextx,nexty,brickhit
+    fadeto(0)
+
+    --infinite loop protection
+    if timer_slow>0 then
+        infcounter+=0.5
+    else
+        infcounter+=1
+    end
+
+    if timer_expand>0 then
+        --check if pad should grow
+        pad_w=flr(pad_wo*1.5)
+    elseif timer_reduce>0 then
+        --check if pad should shrink
+        pad_w=flr(pad_wo/2)
+        pointsmult=2
+    else
+        pad_w=pad_wo
+        pointsmult=1
+    end
+
+    if btn(0) then
+        --left
+        pad_dx=-2.5
+        buttpress=true
+        pointstuck(-1)
+    end
+    if btn(1) then
+        --right
+        pad_dw=2.5
+        buttpress=true
+        pointstuck(1)
+    end
+    if btnp(5) then
+        releasestuck()
+    end
+    if btnp(4) then
+        --nectlevel()
+    end
+
+    if not(buttpress) then
+        pad_dx=pad_dx/1.3
+        spdwind=0
+    else
+        spdwind+=1
+    end
+ 
+    pad_x+=pad_dx
+    local oldx = pad_x
+    pad_x=mid(pad_w/2,pad_x,127-(pad_w/2))
+    if pad_x!=oldx then
+        spdwind=0
+    end
+ 
+    if spdwind>5 then
+        if pad_dx < 0 then
+            spawnspeedline(pad_x+(pad_w/2),pad_y)
+        else
+            spawnspeedline(pad_x-((pad_w/2)+2.5),pad_y)
+        end
+    end
+  
+    -- big ball loop
+    for bi=#ball,1,-1 do
+        updateball(bi)
+    end
+    for bi=#ball,1,-1 do
+        --check if paddle rammed ball
+        padramcheck(ball[bi])
+    end
+ 
+    -- move pills
+    -- check collision for pills
+    for i=#pill,1,-1 do
+        pill[i].y+=0.7
+        if pill[i].y > 128 then
+            -- remove pill
+            del(pill,pill[i])
+        elseif box_box(pill[i].x,pill[i].y,8,6,pad_x-(pad_w/2),pad_y,pad_w,pad_h) then
+            powerupget(pill[i].t)
+            spawnpillpuft(pill[i].x,pill[i].y,pill[i].t)
+            -- remove pill
+            del(pill,pill[i])
+            sfx(11)
+        end
+    end
+ 
+    update_sd()
+ 
+    checkexplosions()
+ 
+    if levelfinished() then
+        _draw()
+        if levelnum >= #levels then
+            wingame()
+        else
+            levelover()
+        end
+    end
+ 
+    -- powerup timers
+    if timer_mega > 0 then
+        timer_mega-=1
+    end
+    if timer_mega_w > 0 then
+        timer_mega_w-=1
+    end 
+    if timer_slow > 0 then
+        timer_slow-=1
+    end
+    if timer_expand > 0 then
+        timer_expand-=1
+    end
+    if timer_reduce > 0 then
+        timer_reduce-=1
+    end
+ 
+    --animate bricks
+    animatebricks()  
+end
